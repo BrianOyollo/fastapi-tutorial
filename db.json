@@ -1,0 +1,19 @@
+[
+   {
+      "id": 1,
+      "title": "Post 1",
+      "content": "Proident aliqua consequat exercitation do ex amet sint eiusmod."
+   },
+   {
+      "id": 2,
+      "title": "Post 2",
+      "content": "Proident aliqua consequat exercitation do ex amet sint eiusmod."
+   },
+   {
+      "id": 4,
+      "title": "code updates",
+      "content": "Removing duplicates one function at a time!",
+      "published": true,
+      "rating": 0
+   }
+]
