@@ -1,19 +1,16 @@
 [
    {
-      "id": 1,
-      "title": "Post 1",
-      "content": "Proident aliqua consequat exercitation do ex amet sint eiusmod."
-   },
-   {
-      "id": 2,
-      "title": "Post 2",
-      "content": "Proident aliqua consequat exercitation do ex amet sint eiusmod."
-   },
-   {
       "id": 4,
-      "title": "code updates",
-      "content": "Removing duplicates one function at a time!",
+      "title": "Code Updates part 1",
+      "content": "string",
       "published": true,
-      "rating": 0
+      "rating": 6
+   },
+   {
+      "id": 5,
+      "title": "Code Updates part 2",
+      "content": "string",
+      "published": true,
+      "rating": 6
    }
 ]
