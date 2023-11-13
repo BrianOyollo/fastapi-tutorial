@@ -1,8 +1,37 @@
 from fastapi import FastAPI, Response, status, HTTPException
 from pydantic import BaseModel
 import json
+import psycopg
+import os 
+import time
 
-app = FastAPI()
+
+username = os.environ['POSTGRESQL_USER']
+password = os.environ['POSTGRESQL_PASSWORD']
+dbname = 'fastapidb'
+
+while True:
+    try:
+        print(f"Connecting to {dbname} database ...", end='', flush=True)
+        conn = psycopg.connect(
+            host = 'localhost',
+            user = username,
+            password = password,
+            dbname = dbname
+        )
+        cursor = conn.cursor()
+        print(f"\rConnecting to {dbname} database ...success!")
+        break
+    
+    except Exception as error:
+        print(f"\rConnecting to {dbname} database ...failed!")
+        print(error)
+        time.sleep(2)
+
+app = FastAPI(
+    title="BlogAPI",
+    version="1.0"
+)
 
 def read_db():
     with open('db.json', 'r') as file:
