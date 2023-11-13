@@ -2,7 +2,7 @@
    {
       "id": 4,
       "title": "Code Updates part 1",
-      "content": "string",
+      "content": "Connecting to db using psycopg module",
       "published": true,
       "rating": 6
    },
