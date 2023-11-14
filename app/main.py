@@ -16,27 +16,6 @@ dbname = 'fastapidb'
 
 models.Base.metadata.create_all(bind=engine)
 
-
-
-# while True:
-#     try:
-#         print(f"Connecting to {dbname} database ...", end='', flush=True)
-#         conn = psycopg.connect(
-#             host = 'localhost',
-#             user = username,
-#             password = password,
-#             dbname = dbname,
-#             row_factory=dict_row
-#         )
-#         cursor = conn.cursor()
-#         print(f"\rConnecting to {dbname} database ...success!")
-#         break
-    
-#     except Exception as error:
-#         print(f"\rConnecting to {dbname} database ...failed!")
-#         print(error)
-#         time.sleep(2)
-
 app = FastAPI(
     title="BlogAPI",
     version="1.0"
@@ -53,12 +32,6 @@ class updatePost(BaseModel):
     published:bool|None=None
 
 
-# @app.get("/posts")
-# async def get_posts(db: Session = Depends(get_db)):
-#     posts = db.query(models.Post).all()
-#     return {'posts':posts}
-
-
 @app.get('/posts')
 async def all_posts(db:Session = Depends(get_db)):
     posts = db.query(models.Post).all()
@@ -66,21 +39,18 @@ async def all_posts(db:Session = Depends(get_db)):
 
 @app.get("/posts/{post_id}")
 async def get_post(post_id:int, db:Session = Depends(get_db)):
-    post = db.query(models.Post).filter_by(id=post_id).all()
-    return {'post':post}
+    post = db.query(models.Post).filter(models.Post.id == post_id).first()
+    
     # query = "SELECT * FROM fastapi WHERE id = %s"
     # post = cursor.execute(query,(post_id,)).fetchone()
 
-    # if not post:
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {post_id} not found!")
-    # return post
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {post_id} not found!")
+    return post
+
 
 @app.post("/posts/new", status_code=status.HTTP_201_CREATED)
 async def new_post(post:Post, db:Session = Depends(get_db)): 
-    title = post.title
-    content = post.content
-    published = post.published
-
     new_post = models.Post(**post.model_dump())
     db.add(new_post)
     db.commit()
@@ -93,28 +63,31 @@ async def new_post(post:Post, db:Session = Depends(get_db)):
 
     
 
-# @app.delete("/posts/{post_id}/delete", status_code=status.HTTP_204_NO_CONTENT)
-# async def delete_post(post_id:int):
-#     query = "DELETE FROM fastapi WHERE id = %s RETURNING *"
-#     deleted_post = cursor.execute(query, (post_id,)).fetchone()
-
-#     if not deleted_post:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {post_id} not found!")
+@app.delete("/posts/{post_id}/delete", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(post_id:int, db:Session = Depends(get_db)):
+    # query = "DELETE FROM fastapi WHERE id = %s RETURNING *"
+    deleted_post = db.query(models.Post).filter(models.Post.id == post_id)
+    if deleted_post.first() == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {post_id} not found!")
     
-#     conn.commit()
-#     return deleted_post
+    deleted_post.delete(synchronize_session=False)
+    db.commit()
 
-# @app.put("/posts/{post_id}/update")
-# async def update_post(post_id:int, post_update:updatePost):
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-#     query = "UPDATE fastapi SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *"
-#     updated_post = cursor.execute(query, (post_update.title, post_update.content,post_update.published, post_id)).fetchone()
+@app.put("/posts/{post_id}/update")
+async def update_post(post_id:int, post_update:updatePost, db:Session = Depends(get_db)):
 
-#     if updated_post == None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'Post with id {post_id} not found!')
+    # query = "UPDATE fastapi SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *"
+    updated_post = db.query(models.Post).filter(models.Post.id == post_id)
 
-#     conn.commit()
-#     return updated_post
+    if updated_post.first() == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'Post with id {post_id} not found!')
+    
+    updated_post.update(post_update.model_dump(exclude_unset=True), synchronize_session=False)
+    db.commit()
+
+    return updated_post.first()
 
 
     
