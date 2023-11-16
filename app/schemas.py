@@ -13,16 +13,7 @@ class updatePost(BaseModel):
     content:str|None=None
     published:bool|None=None
 
-class PostResponse(BaseModel):
-    title:str
-    content:str
-    created_at:datetime
 
-    class Config:
-        form_attributes = True
-
-
-# ------------------ users ---------------------
 class User(BaseModel):
     id:int
     email:EmailStr
@@ -34,6 +25,17 @@ class UserResponse(BaseModel):
 
     class Config:
         form_attributes = True
+
+
+class PostResponse(BaseModel):
+    title:str
+    content:str
+    created_at:datetime
+    author_info:UserResponse
+
+    class Config:
+        form_attributes = True
+
 
 # ------------------- authentication ----------------------
 

@@ -28,7 +28,7 @@ async def get_post(post_id:int, db:Session = Depends(get_db)):
 
 @router.post("/new", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 async def new_post(post:schemas.Post, db:Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)): 
-    new_post = models.Post(**post.model_dump())
+    new_post = models.Post(author=current_user.id, **post.model_dump())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -42,11 +42,16 @@ async def new_post(post:schemas.Post, db:Session = Depends(get_db), current_user
 @router.delete("/{post_id}/delete", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(post_id:int, db:Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     # query = "DELETE FROM fastapi WHERE id = %s RETURNING *"
-    deleted_post = db.query(models.Post).filter(models.Post.id == post_id)
-    if deleted_post.first() == None:
+    post_to_delete_query = db.query(models.Post).filter(models.Post.id == post_id)
+    post_to_delete = post_to_delete_query.first()
+
+    if post_to_delete == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {post_id} not found!")
     
-    deleted_post.delete(synchronize_session=False)
+    if post_to_delete.author != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform this request!")
+    
+    post_to_delete_query.delete(synchronize_session=False)
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -55,12 +60,16 @@ async def delete_post(post_id:int, db:Session = Depends(get_db), current_user = 
 async def update_post(post_id:int, post_update:schemas.updatePost, db:Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
 
     # query = "UPDATE fastapi SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *"
-    updated_post = db.query(models.Post).filter(models.Post.id == post_id)
+    post_to_update_query = db.query(models.Post).filter(models.Post.id == post_id)
+    post_to_update = post_to_update_query.first()
 
-    if updated_post.first() == None:
+    if post_to_update == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'Post with id {post_id} not found!')
+     
+    if post_to_update.author != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform this request!")
     
-    updated_post.update(post_update.model_dump(exclude_unset=True), synchronize_session=False)
+    post_to_update_query.update(post_update.model_dump(exclude_unset=True), synchronize_session=False)
     db.commit()
 
-    return updated_post.first()
+    return post_to_update
