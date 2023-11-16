@@ -1,10 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 import os
 
-username = os.environ['POSTGRESQL_USER']
-password = os.environ['POSTGRESQL_PASSWORD']
+
+load_dotenv()
+username = os.getenv('POSTGRESQL_USER')
+password = os.getenv('POSTGRESQL_PASSWORD')
 dbname = 'fastapidb'
 
 
