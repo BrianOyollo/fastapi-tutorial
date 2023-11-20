@@ -1,6 +1,6 @@
 from fastapi import Response, status, HTTPException, Depends, APIRouter
 from .. import models, schemas,oauth2
-from typing import List 
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from ..database import get_db
 
@@ -10,9 +10,11 @@ router = APIRouter(
 )
 
 @router.get('/', response_model=List[schemas.PostResponse])
-async def all_posts(db:Session = Depends(get_db)):
-    posts = db.query(models.Post).all()
+async def all_posts(db:Session = Depends(get_db), q:Optional[str]=""):
+    posts = db.query(models.Post).filter(models.Post.title.icontains(q)).all()
     return posts
+
+
 
 @router.get("/{post_id}", response_model=schemas.PostResponse)
 async def get_post(post_id:int, db:Session = Depends(get_db)):

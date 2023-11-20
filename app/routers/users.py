@@ -17,6 +17,7 @@ async def get_users(db:Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="There are no users")
     return users
 
+
 @router.post("/new", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
 async def register_user(user:schemas.User, db: Session = Depends(get_db)):
     hashed_password = utils.hash_password(user.password)
@@ -31,6 +32,7 @@ async def register_user(user:schemas.User, db: Session = Depends(get_db)):
     
     except Exception:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"A user with email '{user.email}' already exists. Please use a different one!")
+
 
 @router.get("/{user_id}", response_model=schemas.UserResponse)
 async def get_user(user_id:int, db:Session = Depends(get_db)):
