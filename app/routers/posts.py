@@ -1,4 +1,5 @@
 from fastapi import Response, status, HTTPException, Depends, APIRouter
+from sqlalchemy import func
 from .. import models, schemas,oauth2
 from typing import List, Optional
 from sqlalchemy.orm import Session
@@ -9,9 +10,11 @@ router = APIRouter(
     tags=['Posts']
 )
 
-@router.get('/', response_model=List[schemas.PostResponse])
+@router.get('/', response_model=List[schemas.PostResponse1])
+# @router.get('/')
 async def all_posts(db:Session = Depends(get_db), q:Optional[str]=""):
-    posts = db.query(models.Post).filter(models.Post.title.icontains(q)).all()
+    posts = db.query(models.Post, func.count(models.Like.post_id).label("likes")).join(models.Like, models.Like.post_id == models.Post.id).group_by(models.Post.id).all()
+    
     return posts
 
 

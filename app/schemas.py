@@ -25,18 +25,20 @@ class UserResponse(BaseModel):
     class Config:
         form_attributes = True
 
-class LikeResponse(BaseModel):
-    user_id:int
-
-    class Config:
-        form_attributes = True
 
 class PostResponse(BaseModel):
     title:str
     content:str
     created_at:datetime
     author_info:UserResponse
-    # likes:LikeResponse
+
+
+    class Config:
+        form_attributes = True
+
+class PostResponse1(BaseModel):
+    Post:PostResponse
+    likes:int
 
     class Config:
         form_attributes = True
