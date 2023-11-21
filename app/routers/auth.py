@@ -26,4 +26,4 @@ async def login(user_logins:OAuth2PasswordRequestForm = Depends(), db:Session = 
     return {
         "access_token":f"{access_token}",
         "token_type":"Bearer"    
-            }
+        }

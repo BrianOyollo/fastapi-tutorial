@@ -15,13 +15,9 @@ async def all_posts(db:Session = Depends(get_db), q:Optional[str]=""):
     return posts
 
 
-
 @router.get("/{post_id}", response_model=schemas.PostResponse)
 async def get_post(post_id:int, db:Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
-    
-    # query = "SELECT * FROM fastapi WHERE id = %s"
-    # post = cursor.execute(query,(post_id,)).fetchone()
 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {post_id} not found!")
@@ -35,15 +31,11 @@ async def new_post(post:schemas.Post, db:Session = Depends(get_db), current_user
     db.commit()
     db.refresh(new_post)
 
-    # query = "INSERT INTO fastapi (title, content,published) VALUES(%s,%s,%s) RETURNING *"
-    # new_post = cursor.execute(query, (title, content, published)).fetchone()
-    # conn.commit()
     return new_post
 
 
 @router.delete("/{post_id}/delete", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(post_id:int, db:Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
-    # query = "DELETE FROM fastapi WHERE id = %s RETURNING *"
     post_to_delete_query = db.query(models.Post).filter(models.Post.id == post_id)
     post_to_delete = post_to_delete_query.first()
 
@@ -60,8 +52,6 @@ async def delete_post(post_id:int, db:Session = Depends(get_db), current_user = 
 
 @router.put("/{post_id}/update", response_model=schemas.PostResponse)
 async def update_post(post_id:int, post_update:schemas.updatePost, db:Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
-
-    # query = "UPDATE fastapi SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *"
     post_to_update_query = db.query(models.Post).filter(models.Post.id == post_id)
     post_to_update = post_to_update_query.first()
 

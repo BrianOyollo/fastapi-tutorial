@@ -15,7 +15,6 @@ class updatePost(BaseModel):
 
 
 class User(BaseModel):
-    id:int
     email:EmailStr
     password:str
 
@@ -26,18 +25,22 @@ class UserResponse(BaseModel):
     class Config:
         form_attributes = True
 
+class LikeResponse(BaseModel):
+    user_id:int
+
+    class Config:
+        form_attributes = True
 
 class PostResponse(BaseModel):
     title:str
     content:str
     created_at:datetime
     author_info:UserResponse
+    # likes:LikeResponse
 
     class Config:
         form_attributes = True
 
-
-# ------------------- authentication ----------------------
 
 class UserLogin(BaseModel):
     email:EmailStr
@@ -49,3 +52,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id:int|None=None
+

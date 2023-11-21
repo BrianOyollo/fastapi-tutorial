@@ -21,5 +21,11 @@ class Post(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     author = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     author_info = relationship("User")
+    likes = relationship("Like")
 
 
+class Like(Base):
+    __tablename__ = 'likes'
+
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
+    post_id = Column(Integer, ForeignKey('posts.id', ondelete='CASCADE'), primary_key=True)
