@@ -36,7 +36,7 @@ class PostResponse(BaseModel):
     class Config:
         form_attributes = True
 
-class PostResponse1(BaseModel):
+class PostLikesResponse(BaseModel):
     Post:PostResponse
     likes:int
 
