@@ -9,7 +9,7 @@ load_dotenv()
 username = os.getenv('POSTGRESQL_USER')
 password = os.getenv('POSTGRESQL_PASSWORD')
 dbname = os.getenv('DATABASE_NAME')
-db_host = os.getnev('DB_HOST')
+db_host = os.getenv('DB_HOST')
 host_port = os.getenv('HOST_PORT')
 
 
