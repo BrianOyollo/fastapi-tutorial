@@ -1,0 +1,43 @@
+version: "3"                                                              # docker version
+services: 
+  api:                                                                    # first service which is the api
+    build: .                                                              # docker will build the image 
+    ports: 
+      - 8000:8000                                                         # first port is the local one, second is the docker one where it is routed
+
+    # env_file: # environment variables
+    #   - ./.env
+
+    volumes:
+      - ./:/usr/src/app:ro
+
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+
+
+    environment:
+      - POSTGRESQL_USER=postgres
+      - POSTGRESQL_PASSWORD=TestPass123
+      - DB_HOST=db
+      - HOST_PORT=5432
+      - DATABASE_NAME=fastapidb
+      - SECRET_KEY=9da44342b3c76f0dcea7ed71ccff4729820344b24bb2c1af27b128f3890bc6d3
+      - ALGORITHM=HS256
+
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=TestPass123
+      - POSTGRES_DB=fastapidb
+
+    volumes:
+      - postgres_db:/var/lib/postgresql/data 
+
+volumes:
+  postgres_db:
+
