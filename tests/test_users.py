@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 from jose import jwt, JWTError
 from app import schemas
 
+
 import pytest
 import os
 from dotenv import load_dotenv
@@ -20,12 +21,12 @@ def test_root(client):
 
 
 def test_create_user(client):
-    test_user = {"email":"jsonhayes@gmail.com", "password":"Testpass123"}
+    test_user = {"email":"jasonhayes@gmail.com", "password":"Testpass123"}
     response = client.post('/users/new', json=test_user)
 
     new_test_user = schemas.UserResponse(**response.json())
     assert response.status_code == 201
-    assert new_test_user.email == 'jsonhayes@gmail.com'
+    assert new_test_user.email == 'jasonhayes@gmail.com'
 
 
 def test_login_user(client, test_user):
@@ -41,11 +42,11 @@ def test_login_user(client, test_user):
 
 
 @pytest.mark.parametrize("username, password, status_code", [
-    ('wronemail@gmail.com', 'Testpass123', 403),
-    ('jsonhayes@gmail.com', 'Testpass1233', 403),
-    ('wronemail@gmail.com', 'Testpass1223', 403),
+    ('wrongemail@gmail.com', 'Testpass123', 403),
+    ('jasonhayes@gmail.com', 'Testpass1233', 403),
+    ('wrongemail@gmail.com', 'Testpass1223', 403),
     (None, 'Testpass123', 422),
-    ('wronemail@gmail.com', None, 422),
+    ('wrongemail@gmail.com', None, 422),
     (None, None, 422),
 ])
 def test_incorrect_login(client, test_user, username, password, status_code):

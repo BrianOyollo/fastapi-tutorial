@@ -20,7 +20,7 @@ class User(BaseModel):
 
 class UserResponse(BaseModel):
     model_config = ConfigDict(form_attributes=True)
-    
+
     id:int
     email:EmailStr
     created_at:datetime
@@ -30,6 +30,7 @@ class UserResponse(BaseModel):
 
 
 class PostResponse(BaseModel):
+    id:int
     title:str
     content:str
     created_at:datetime

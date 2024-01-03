@@ -3,9 +3,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.main import app
 from app.database import get_db, Base
+from app import oauth2
+from app import models
 import os
 import pytest
 from dotenv import load_dotenv
+
 
 
 # test db stuff
@@ -59,8 +62,63 @@ def client(session):
 
 @pytest.fixture
 def test_user(client):
-    test_user_data = {"email":"jsonhayes@gmail.com", "password":"Testpass123"}
+    test_user_data = {"email":"jasonhayes@gmail.com", "password":"Testpass123"}
     response = client.post("/users/new", json=test_user_data)
     test_user = response.json()
     test_user['password'] = test_user_data['password']
     return test_user
+
+
+@pytest.fixture
+def token(test_user):
+    return oauth2.create_access_token(data = {'user_id':test_user.id})
+
+@pytest.fixture
+def authorized_token(client, token):
+    client.headers = {
+        **client.headers, 
+        "Authorization": f"Bearer {token}"
+
+    }
+    return client
+
+@pytest.fixture
+def test_posts(test_user, session):
+    """
+    Adds dummy posts in the testing db
+    """
+    dummy_posts = [
+
+        {
+            'title':"Test post 1",
+            'content': 'Contents of test post 1',
+            'author': test_user['id']
+        },
+        {
+            'title':"Test post 2",
+            'content': 'Contents of test post 2',
+            'author': test_user['id']
+        },
+        {
+            'title':"Test post 3",
+            'content': 'Contents of test post 3',
+            'author': test_user['id']
+        },
+        {
+            'title':"Test post 4",
+            'content': 'Contents of test post 4',
+            'author': test_user['id']
+        }
+    ]
+
+    def create_post_model(post):
+        return models.Post(**post)
+    
+    posts_map = map(create_post_model, dummy_posts)
+    posts_list = list(posts_map)
+
+    session.add_all(posts_list)
+    session.commit()
+
+    db_posts = session.query(models.Post).all()
+    return db_posts

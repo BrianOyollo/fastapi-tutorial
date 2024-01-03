@@ -10,7 +10,7 @@ router = APIRouter(
     tags=['Posts']
 )
 
-@router.get('/', response_model=List[schemas.PostLikesResponse])
+@router.get('/', status_code=status.HTTP_200_OK, response_model=List[schemas.PostLikesResponse])
 # @router.get('/')
 async def all_posts(db:Session = Depends(get_db), q:Optional[str]=""):
     posts = db.query(models.Post, func.count(models.Like.post_id).label("likes")).join(models.Like, models.Like.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.icontains(q)).all()
