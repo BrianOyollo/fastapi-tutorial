@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from jose import jwt, JWTError
 from app import schemas
-from .database import session, client
+
 import pytest
 import os
 from dotenv import load_dotenv
@@ -11,14 +11,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv('ALGORITHM')
 
-@pytest.fixture
-def test_user(client):
-    test_user_data = {"email":"jsonhayes@gmail.com", "password":"Testpass123"}
-    response = client.post("/users/new", json=test_user_data)
-    test_user = response.json()
-    test_user['password'] = test_user_data['password']
-    print(test_user)
-    return test_user
+
 
 def test_root(client):
     response = client.get("/")
@@ -45,3 +38,17 @@ def test_login_user(client, test_user):
     assert response.status_code == 200
     assert login_response.token_type == 'bearer'
     assert payload.get('user_id') == test_user['id']
+
+
+@pytest.mark.parametrize("username, password, status_code", [
+    ('wronemail@gmail.com', 'Testpass123', 403),
+    ('jsonhayes@gmail.com', 'Testpass1233', 403),
+    ('wronemail@gmail.com', 'Testpass1223', 403),
+    (None, 'Testpass123', 422),
+    ('wronemail@gmail.com', None, 422),
+    (None, None, 422),
+])
+def test_incorrect_login(client, test_user, username, password, status_code):
+    response = client.post("/login", data={'username': username, 'password':password})
+    assert response.status_code == status_code
+    
