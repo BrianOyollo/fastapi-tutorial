@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime
 
 # ----------- Posts ---------------------------
@@ -19,11 +19,14 @@ class User(BaseModel):
     password:str
 
 class UserResponse(BaseModel):
+    model_config = ConfigDict(form_attributes=True)
+    
+    id:int
     email:EmailStr
     created_at:datetime
 
-    class Config:
-        form_attributes = True
+    # class ConfigDict:
+    #     form_attributes = True
 
 
 class PostResponse(BaseModel):
@@ -33,15 +36,17 @@ class PostResponse(BaseModel):
     author_info:UserResponse
 
 
-    class Config:
+    class ConfigDic:
         form_attributes = True
 
 class PostLikesResponse(BaseModel):
+    model_config = ConfigDict(form_attributes=True)
+
     Post:PostResponse
     likes:int
 
-    class Config:
-        form_attributes = True
+    # class Config:
+    #     form_attributes = True
 
 
 class UserLogin(BaseModel):

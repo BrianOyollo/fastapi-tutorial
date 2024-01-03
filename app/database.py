@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import os
@@ -17,7 +18,8 @@ connection_string = f"postgresql://{username}:{password}@{db_host}:{host_port}/{
 engine = create_engine(connection_string)
 sessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    pass
 
 def get_db():
     db = sessionLocal()
