@@ -33,6 +33,7 @@ class PostResponse(BaseModel):
     id:int
     title:str
     content:str
+    published:bool
     created_at:datetime
     author_info:UserResponse
 

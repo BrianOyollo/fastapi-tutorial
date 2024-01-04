@@ -68,13 +68,21 @@ def test_user(client):
     test_user['password'] = test_user_data['password']
     return test_user
 
+@pytest.fixture
+def test_user2(client):
+    test_user_data = {"email":"rayperry@gmail.com", "password":"Testpass123"}
+    response = client.post("/users/new", json=test_user_data)
+    test_user = response.json()
+    test_user['password'] = test_user_data['password']
+    return test_user
+
 
 @pytest.fixture
 def token(test_user):
-    return oauth2.create_access_token(data = {'user_id':test_user.id})
+    return oauth2.create_access_token(data = {'user_id':test_user['id']})
 
 @pytest.fixture
-def authorized_token(client, token):
+def authorized_client(client, token):
     client.headers = {
         **client.headers, 
         "Authorization": f"Bearer {token}"
@@ -83,7 +91,7 @@ def authorized_token(client, token):
     return client
 
 @pytest.fixture
-def test_posts(test_user, session):
+def test_posts(test_user,test_user2, session):
     """
     Adds dummy posts in the testing db
     """
@@ -108,6 +116,11 @@ def test_posts(test_user, session):
             'title':"Test post 4",
             'content': 'Contents of test post 4',
             'author': test_user['id']
+        },
+        {
+            'title':"Test post 5",
+            'content': 'Contents of test post 5',
+            'author': test_user2['id']
         }
     ]
 
