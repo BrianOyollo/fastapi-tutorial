@@ -6,7 +6,6 @@ jobs:
     job1:
         environment:
             name: testing
-
         env:
             POSTGRESQL_USER: ${{secrets.POSTGRESQL_USER}}
             POSTGRESQL_PASSWORD: ${{secrets.POSTGRESQL_PASSWORD}}
