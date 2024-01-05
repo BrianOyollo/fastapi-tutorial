@@ -13,7 +13,7 @@ router = APIRouter(
 @router.get('/', status_code=status.HTTP_200_OK, response_model=List[schemas.PostLikesResponse])
 # @router.get('/')
 async def all_posts(db:Session = Depends(get_db), q:Optional[str]=""):
-    posts = db.query(models.Post, func.count(models.Like.post_id).label("likes")).join(models.Like, models.Like.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.icontains(q)).all()
+    posts = db.query(models.Post, func.count(models.Like.post_id).label("likes_count")).join(models.Like, models.Like.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.icontains(q)).all()
     
     return posts
 
@@ -21,7 +21,7 @@ async def all_posts(db:Session = Depends(get_db), q:Optional[str]=""):
 @router.get("/{post_id}", response_model=schemas.PostLikesResponse)
 async def get_post(post_id:int, db:Session = Depends(get_db)):
 
-    post = db.query(models.Post, func.count(models.Like.post_id).label("likes")).join(models.Like, models.Like.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == post_id).first()
+    post = db.query(models.Post, func.count(models.Like.post_id).label("likes_count")).join(models.Like, models.Like.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == post_id).first()
 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {post_id} not found!")

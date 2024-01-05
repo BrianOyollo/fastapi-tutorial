@@ -45,11 +45,13 @@ class PostLikesResponse(BaseModel):
     model_config = ConfigDict(form_attributes=True)
 
     Post:PostResponse
-    likes:int
+    likes_count:int
 
     # class Config:
     #     form_attributes = True
 
+class LikesResponse(BaseModel):
+    created_at:datetime
 
 class UserLogin(BaseModel):
     email:EmailStr

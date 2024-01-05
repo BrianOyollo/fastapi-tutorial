@@ -10,6 +10,11 @@ router = APIRouter(
     tags = ['likes']
 )
 
+@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=List[schemas.PostResponse])
+async def user_likes(user_id:int, db:Session = Depends(get_db)):
+    user_likes = db.query(models.Post).join(models.Like, models.Like.post_id == models.Post.id, isouter=True).filter(models.Like.user_id == user_id).all()
+    return user_likes
+
 
 @router.post("/{post_id}/like", status_code=status.HTTP_201_CREATED)
 async def like_post(post_id:int, db:Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
@@ -22,7 +27,7 @@ async def like_post(post_id:int, db:Session = Depends(get_db), current_user = De
     found_like = like_query.first()
 
     if found_like:
-        # if unlike if it had been liked (a like exists)
+        # unlike if it had been liked (a like exists)
         like_query.delete(synchronize_session=False)
         db.commit()
         return Response(status_code=status.HTTP_204_NO_CONTENT)

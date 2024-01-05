@@ -135,3 +135,10 @@ def test_posts(test_user,test_user2, session):
 
     db_posts = session.query(models.Post).all()
     return db_posts
+
+
+@pytest.fixture
+def liked_posts(authorized_client, test_user, test_posts):
+    response = authorized_client.post(f"/likes/{test_posts[4].id}/like")
+    return response
+    
