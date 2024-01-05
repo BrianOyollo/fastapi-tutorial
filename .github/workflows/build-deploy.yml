@@ -4,7 +4,20 @@ on: [push, pull_request]
 
 jobs:
     job1:
+        environment:
+            name: testing
+
+        env:
+            POSTGRESQL_USER: ${{secrets.POSTGRESQL_USER}}
+            POSTGRESQL_PASSWORD: ${{secrets.POSTGRESQL_PASSWORD}}
+            DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+            DB_HOST: ${{secrets.DB_HOST}}
+            HOST_PORT: ${{secrets.HOST_PORT}}
+            SECRET_KEY: ${{secrets.SECRET_KEY}}
+            ALGORITHM: ${{secrets.ALGORITHM}}
+
         runs-on: ubuntu-latest
+
         steps:
             - name: pulling git repo
               uses: actions/checkout@v4
