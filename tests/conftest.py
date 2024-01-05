@@ -20,7 +20,7 @@ db_host = os.getenv('DB_HOST')
 host_port = os.getenv('HOST_PORT')
 
 
-connection_string = f"postgresql://{username}:{password}@{db_host}:{host_port}/fastapidb_test"
+connection_string = f"postgresql://postgres:TestPassword5432@localhost:5432/fastapidb_test"
 engine = create_engine(connection_string)
 TestsessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
