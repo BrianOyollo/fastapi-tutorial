@@ -13,14 +13,14 @@ from dotenv import load_dotenv
 
 # test db stuff
 load_dotenv()
-username = os.getenv('POSTGRESQL_USER')
-password = os.getenv('POSTGRESQL_PASSWORD')
-dbname = os.getenv('DATABASE_NAME')
-db_host = os.getenv('DB_HOST')
-host_port = os.getenv('HOST_PORT')
+username = os.environ['POSTGRESQL_USER']
+password = os.environ['POSTGRESQL_PASSWORD']
+dbname = os.environ['DATABASE_NAME']
+db_host = os.environ['DB_HOST']
+host_port = os.environ['HOST_PORT']
 
 
-connection_string = f"postgresql://postgres:TestPassword5432@localhost:5432/fastapidb_test"
+connection_string = f"postgresql://{username}:{password}@{db_host}:{host_port}/{dbname}_test"
 engine = create_engine(connection_string)
 TestsessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
