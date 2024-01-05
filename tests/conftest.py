@@ -20,7 +20,10 @@ db_host = os.environ['DB_HOST']
 host_port = os.environ['HOST_PORT']
 
 
+
+
 connection_string = f"postgresql://{username}:{password}@{db_host}:{host_port}/{dbname}_test"
+
 engine = create_engine(connection_string)
 TestsessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
