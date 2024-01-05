@@ -20,7 +20,7 @@ jobs:
             postgres:
                 image: postgres
                 env:
-                    # POSTGRES_USER: ${{secrets.POSTGRESQL_USER}}
+                    POSTGRES_USER: ${{secrets.POSTGRESQL_USER}}
                     POSTGRES_PASSWORD: ${{secrets.POSTGRESQL_PASSWORD}}
                     POSTGRES_DB: ${{secrets.DATABASE_NAME}}_test
                     
